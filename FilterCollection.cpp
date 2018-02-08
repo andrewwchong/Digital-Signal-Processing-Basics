@@ -250,6 +250,124 @@ private:
 
 
 
+class ButterworthFilterClass :public Filter      //Subclass IIRFilter class of parent class: Filter
+{
+
+public:
+	float *pfilteredData;
+
+
+	float filter(void)  // do everything inside the filter function
+	{
+
+		return ButterworthFilter();
+
+	}
+
+	void pinit()   //Reference the filter data with a pointer to allow more flexibility
+	{
+
+		pfilteredData = &filteredData;
+	}
+
+
+
+	void B_kA_kInit()  // Constants used to weight data sample values 
+	{
+
+		B_k[1] = 0.1;
+		A_k[1] = 0.1;
+
+		B_k[2] = 0.15;
+		A_k[2] = 0.15;
+
+		B_k[3] = 0.2;
+		A_k[3] = 0.2;
+
+		B_k[4] = 0.25;
+		A_k[4] = 0.25;
+
+		B_k[5] = 0.3;
+		A_k[5] = 0.3;
+
+	}
+
+
+	void B_kInit(int BK1, int BK2, int BK3, int BK4, int BK5)   // Reinitialize constants used to weight data feed forward sample values 
+	{
+
+		B_k[1] = BK1;
+		B_k[2] = BK2;
+		B_k[3] = BK3;
+		B_k[4] = BK4;
+		B_k[5] = BK5;
+
+	}
+
+	void A_kInit(int AK1, int AK2, int AK3, int AK4, int AK5)  // Reinitialize constants used to weight data feed forward sample values 
+	{
+
+		A_k[1] = AK1;
+		A_k[2] = AK2;
+		A_k[3] = AK3;
+		A_k[4] = AK4;
+		A_k[5] = AK5;
+
+	}
+
+
+private:
+
+	float sumInput = 0, sumPrevOut = 0;
+	int arrayPosition = 0, arrayPositionY = 0;
+
+	float B_k[5];
+	float A_k[5];
+
+	float ButterworthFilter() //do everything insde the filter
+
+	{
+		/*
+		for (arrayPosition = 1; arrayPosition <= 5; arrayPosition++)    //filter 5 items     OR    GET ALL THE DATA FIRST
+		{
+		printf("Input Data:");
+		scanf_s("%f", &rawData);
+		queueDataX(rawData);
+		}
+		*/
+
+		for (arrayPositionY = 1; arrayPositionY <= 5; arrayPositionY++)    //filter 5 items
+		{
+
+
+		//	sumInput += float(B_k[arrayPositionY] * (CALL_STACK_X[DATA_SAMPLE_SIZE - arrayPositionY]));         //equation of IIR separated into 2 parts and then
+		//	sumPrevOut += float(A_k[arrayPositionY] * (CALL_STACK_Y[DATA_SAMPLE_SIZE - arrayPositionY]));		// subtracted to make it more readable
+
+
+
+
+			sumInput += float((B_k[arrayPositionY] * CALL_STACK_X[DATA_SAMPLE_SIZE - arrayPositionY]));
+
+
+			*pfilteredData = (CALL_STACK_X[0] + CALL_STACK_X[4]) - sumInput;
+
+			printf("Filtered Data is %f\n\n", *pfilteredData);
+			queueDataY(*pfilteredData);
+
+
+		}
+
+		return *pfilteredData;
+
+	}
+
+
+
+};
+
+
+
+
 
 class FIRFilterClass :public Filter        //Subclass FIRFilter class of parent class: Filter
 {
@@ -361,6 +479,8 @@ void main(void)
 
 	IIRFilterClass iir;					//Initialize IIRFilterClass
 	FIRFilterClass fir;					//Initialize FIRFilterClass
+	ButterworthFilterClass butter;			//Initialize ButterworthFilterClass
+
 
 	iir.XYZero();						//Initialize IIR constants
 	iir.B_kA_kInit();
@@ -369,6 +489,10 @@ void main(void)
 	fir.XYZero();						//Initialize FIR constants
 	fir.B_kA_kInit();
 	fir.pinit(); 
+
+	butter.XYZero();						//Initialize FIR constants
+	butter.B_kA_kInit();
+	butter.pinit();
 
 	float rawData = 0.0;
 	char filterData[1000];
@@ -383,23 +507,34 @@ void main(void)
 			scanf_s("%f", &rawData);
 			iir.rawData = rawData;
 			fir.rawData = rawData;
+			butter.rawData = rawData;
+
 
 			iir.queueDataX(iir.rawData);
 			fir.queueDataX(fir.rawData);
+			butter.queueDataX(butter.rawData);
 
 		}
 
 		fir.filteredData = fir.filter();
 		iir.filteredData = iir.filter();
+		butter.filteredData = butter.filter();
+
 
 
 		printf("Filtered Main IIR Data is %f\n\n", iir.filteredData);
 		printf("Filtered Main FIR Data is %f\n\n", fir.filteredData);
+		printf("Filtered Main Butterworth Data is %f\n\n", butter.filteredData);
 
+
+		cin >> filterData;
+		cin >> filterData;
 		cin >> filterData;
 
 		outputStream << "IIR FilterData" << counter << "is" << iir.filteredData << endl;
 		outputStream << "FIR FilterData" << counter << "is" << fir.filteredData << endl;
+		outputStream << "Butterworth FilterData" << counter << "is" << butter.filteredData << endl;
+
 
 		counter++;
 
@@ -423,6 +558,10 @@ void main(void)
 	cout << filterData << endl;
 
 	cout << filterData << endl;									   //PRINT Opened FIR FILTERED DATA
+	cout << filterData << endl;
+	cout << filterData << endl;
+
+	cout << filterData << endl;									   //PRINT Opened Butterworth FILTERED DATA
 	cout << filterData << endl;
 	cout << filterData << endl;
 
