@@ -20,6 +20,7 @@
 using namespace std;
 typedef std::vector<float>  float_Vector;
 
+bool processShow = true;
 
 class Filter
 {
@@ -75,7 +76,10 @@ public:
 		}
 
 		CALL_STACK_X[0] = data;
+		if(processShow)
+		{
 		printf("In the x loop\n");
+		}
 		outputDataX();
 	}
 
@@ -85,11 +89,15 @@ public:
 
 		for (int index = 0; index < DATA_SAMPLE_SIZE; index++) //queue 5 items
 		{
-
+		if(processShow)
+			{
 			printf("Data at %d is %1.2f\n", index, CALL_STACK_X[index]);
+			}
 		}
-
+		if(processShow)
+		{
 		printf("Data queue finished\n\n");
+		}
 
 
 	}
@@ -104,7 +112,10 @@ public:
 		}
 
 		CALL_STACK_Y[0] = data;
-		printf("In the y loop\n");
+		if(processShow)
+			{
+				printf("In the y loop\n");
+			}
 		outputDataY();
 	}
 
@@ -113,12 +124,16 @@ public:
 
 		for (int index = 0; index < DATA_SAMPLE_SIZE; index++) //queue 5 items
 		{
-
+			if(processShow)
+			{
 			printf("Data at %d is %1.2f\n", index, CALL_STACK_Y[index]);
+			}
 		}
 
+		if(processShow)
+		{
 		printf("Data queue finished\n\n");
-
+		}
 
 	}
 
@@ -233,8 +248,11 @@ private:
 			sumPrevOut += float(A_k[arrayPositionY] * (CALL_STACK_Y[DATA_SAMPLE_SIZE - arrayPositionY]));		// subtracted to make it more readable
 
 			*pfilteredData = sumInput - sumPrevOut;
-
+			
+			if(processShow)
+			{
 			printf("Filtered Data is %f\n\n", *pfilteredData);
+			}
 			queueDataY(*pfilteredData);
 
 
@@ -350,8 +368,10 @@ private:
 
 
 			*pfilteredData = (CALL_STACK_X[0] + CALL_STACK_X[4]) - sumInput;
-
+			if(processShow)
+			{
 			printf("Filtered Data is %f\n\n", *pfilteredData);
+			}
 			queueDataY(*pfilteredData);
 
 
@@ -442,8 +462,10 @@ private:
 			sumInput += float(H_k[arrayPositionY] * (CALL_STACK_X[DATA_SAMPLE_SIZE - arrayPositionY]));         //equation of IIR separated into 2 parts and then
 
 			*pfilteredData = sumInput;
-
+			if(processShow)
+			{
 			printf("Filtered Data is %f\n\n", *pfilteredData);
+			}
 			queueDataY(*pfilteredData);
 
 
