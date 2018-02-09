@@ -20,7 +20,7 @@
 using namespace std;
 typedef std::vector<float>  float_Vector;
 
-bool processShow = true;
+bool processShow = false;
 
 class Filter
 {
