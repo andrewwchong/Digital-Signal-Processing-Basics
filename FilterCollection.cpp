@@ -358,11 +358,6 @@ private:
 		{
 
 
-		//	sumInput += float(B_k[arrayPositionY] * (CALL_STACK_X[DATA_SAMPLE_SIZE - arrayPositionY]));         //equation of IIR separated into 2 parts and then
-		//	sumPrevOut += float(A_k[arrayPositionY] * (CALL_STACK_Y[DATA_SAMPLE_SIZE - arrayPositionY]));		// subtracted to make it more readable
-
-
-
 
 			sumInput += float((B_k[arrayPositionY] * CALL_STACK_X[DATA_SAMPLE_SIZE - arrayPositionY]));
 
